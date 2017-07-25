@@ -18,6 +18,9 @@ namespace CathRecorderMain
         public static Rectangle rectRed;
         public static PixelFormat pixelformat = PixelFormat.Format32bppArgb;
 
+        string sKeyName = @"HKEY_CURRENT_USER\Cathreco";
+        string sDefaultDir = @"C:\Cathode Images";
+
         // This is the structure of data to be saved in the settings file.
         public struct RecParam
         {
@@ -125,27 +128,30 @@ namespace CathRecorderMain
         //
         public void LoadRecParamCurrent()
         {
-            string sDelay;
-            // TODO:  Need to do program to load from file.
+ 
+            // Check if keyname exists
+            if (Registry.GetValue(sKeyName, "ImageDirectory", sDefaultDir) == null)
+            {
+                // if not, we need to create the directory and default keys
+                Registry.SetValue(sKeyName, "ImageDirectory", sDefaultDir);
+                Registry.SetValue(sKeyName, "Delay1", 4);
+                Registry.SetValue(sKeyName, "Delay2", 4);
+                Directory.CreateDirectory(sDefaultDir);
+            }
 
-            // Set defaults
+            // Set hard-code parameters
             recparamSet.strFileBaseName = "image";
-
-            recparamSet.strSaveDirectory = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Cathreco", "ImageDirectory", @"C:\Temp").ToString();
-            //recparamSet.strSaveDirectory = @"C:\Temp";
-
             recparamSet.fTimeBetweenFrames = 0.5;
 
-            sDelay = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Cathreco", "Delay1", "4").ToString();
-            recparamSet.nDelay1 = Convert.ToInt32(sDelay);
+            // Now load settable parameters
+            recparamSet.strSaveDirectory = Registry.GetValue(sKeyName, "ImageDirectory", "Error").ToString();
+            recparamSet.nDelay1 = (int)Registry.GetValue(sKeyName, "Delay1", 0);
+            recparamSet.nDelay2 = (int)Registry.GetValue(sKeyName, "Delay2", 0);
 
-            sDelay = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Cathreco", "Delay2", "4").ToString();
-            recparamSet.nDelay2 = Convert.ToInt32(sDelay);
-             
+            //  Now set text boxes
             textBox_ImageDirectory.Text = recparamSet.strSaveDirectory;
             textBox_Delay1.Text = recparamSet.nDelay1.ToString();
             textBox_Delay2.Text = recparamSet.nDelay2.ToString();
-
         }
 
         // FUNCTION:  InitCamera:  Initialize the Camera
@@ -432,7 +438,7 @@ namespace CathRecorderMain
                     button_DetectNoCathodeState.BackColor = Color.LightGreen;
                     button_Delay2State.BackColor = Color.LightGreen;
                     button_DetectCathodeState.BackColor = Color.LightGreen;
-                    button_RecordState.BackColor = Color.Yellow;
+                    button_RecordState.BackColor = Color.LightGreen;
                     label_Flash.Text = "*";
                     break;
 
@@ -729,12 +735,9 @@ namespace CathRecorderMain
         private void AduOpen()
         {
             pAduIO = OpenAduDevice((UInt32)500);
-            if ((uint)pAduIO == 0)
-            {
-                MessageBox.Show("Could not open ADU");
-            }
 
-        }
+            AduSetDisplayFlag((uint)pAduIO != 0); // update display flag
+         }
 
         // FUNCTION:  CloseADU:  Close the ADU208 I/O Device
         //
@@ -773,25 +776,20 @@ namespace CathRecorderMain
             nAduCmdLength = (uint)sAduCmd.Length;
 
             bRC = WriteAduDevice(pAduIO, sAduCmd, nAduCmdLength, out uiWritten, 500);  // request input status
+            AduSetDisplayFlag(bRC); // update display flag
+
             if (!bRC)
-            {
-                MessageBox.Show("Could not write to ADU");
                 return (false);
-            }
 
             bRC = ReadAduDevice(pAduIO, sBuffer, nBufferLength, out uiRead, 500);  // read input status
+            AduSetDisplayFlag(bRC); // update display flag
 
             if (!bRC)
-            {
-                MessageBox.Show("Could not read from ADU");
                 return (false);
-            }
-
 
             fInputState = (sBuffer.ToString()).StartsWith("1");
 
             return (fInputState);
-
         }
 
         // FUNCTION:  AduSetOutState:  Set state of an input
@@ -811,11 +809,66 @@ namespace CathRecorderMain
             nAduCmdLength = (uint)sAduCmd.Length;
 
             bRC = WriteAduDevice(pAduIO, sAduCmd, nAduCmdLength, out uiWritten, 500);  // request input status
-            if (!bRC)
+            AduSetDisplayFlag(bRC); // update display flag
+      }
+  
+        // FUNCTION:  AduSetDisplayFlag:  Set display flag tro show ADU Status
+        //
+        //
+        private void AduSetDisplayFlag(bool fADUStatus)
+        {
+            if (fADUStatus)
             {
-                MessageBox.Show("Could not write to ADU");
+                button_ADUStatus.BackColor = Color.LightGreen;
+                button_ADUStatus.Text = "ADU OK";
             }
+            else
+            {
+                button_ADUStatus.BackColor = Color.Red;
+                button_ADUStatus.Text = "ADU Fail";
+            }
+
         }
+
+        private void button_ApplySettings_Click(object sender, EventArgs e)
+        {
+            string sImageDir;
+            string sDelay1, sDelay2;
+
+            // Set New Values
+
+            sImageDir = textBox_ImageDirectory.Text;
+            sDelay1 = textBox_Delay1.Text;
+            sDelay2 = textBox_Delay2.Text;
+
+            if (!Int32.TryParse(sDelay1, out recparamSet.nDelay1))
+            {
+                MessageBox.Show("Delay 1 Error.");
+                    return;
+            }
+
+            if (!Int32.TryParse(sDelay2, out recparamSet.nDelay2))
+            {
+                MessageBox.Show("Delay 2 Error");
+                    return;
+            }
+
+ 
+            Registry.SetValue(sKeyName, "ImageDirectory", sImageDir);
+            Registry.SetValue(sKeyName, "Delay1", recparamSet.nDelay1);
+            Registry.SetValue(sKeyName, "Delay2", recparamSet.nDelay2);
+            Directory.CreateDirectory(sImageDir);
+
+            recparamSet.strSaveDirectory = Registry.GetValue(sKeyName, "ImageDirectory", "Error").ToString();
+            recparamSet.nDelay1 = (int)Registry.GetValue(sKeyName, "Delay1", 0);
+            recparamSet.nDelay2 = (int)Registry.GetValue(sKeyName, "Delay2", 0);
+
+            //  Now set text boxes
+            textBox_ImageDirectory.Text = recparamSet.strSaveDirectory;
+            textBox_Delay1.Text = recparamSet.nDelay1.ToString();
+            textBox_Delay2.Text = recparamSet.nDelay2.ToString();
+        }
+
     }
 }
 

@@ -47,7 +47,6 @@
             this.checkBox_Bypass = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button_ManualCathodeSense = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.label_Flash = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -60,7 +59,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.textBox_Delay1 = new System.Windows.Forms.TextBox();
             this.textBox_Delay2 = new System.Windows.Forms.TextBox();
-            this.button_SaveSettings = new System.Windows.Forms.Button();
+            this.button_ApplySettings = new System.Windows.Forms.Button();
+            this.button_ADUStatus = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictBox_Current)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictBox_LastSaved)).BeginInit();
             this.SuspendLayout();
@@ -204,7 +204,7 @@
             // checkBox_Bypass
             // 
             this.checkBox_Bypass.AutoSize = true;
-            this.checkBox_Bypass.Location = new System.Drawing.Point(360, 68);
+            this.checkBox_Bypass.Location = new System.Drawing.Point(360, 107);
             this.checkBox_Bypass.Name = "checkBox_Bypass";
             this.checkBox_Bypass.Size = new System.Drawing.Size(60, 17);
             this.checkBox_Bypass.TabIndex = 39;
@@ -222,7 +222,7 @@
             // 
             // button_ManualCathodeSense
             // 
-            this.button_ManualCathodeSense.Location = new System.Drawing.Point(355, 102);
+            this.button_ManualCathodeSense.Location = new System.Drawing.Point(355, 135);
             this.button_ManualCathodeSense.Name = "button_ManualCathodeSense";
             this.button_ManualCathodeSense.Size = new System.Drawing.Size(65, 34);
             this.button_ManualCathodeSense.TabIndex = 41;
@@ -230,15 +230,6 @@
             this.button_ManualCathodeSense.UseVisualStyleBackColor = true;
             this.button_ManualCathodeSense.MouseDown += new System.Windows.Forms.MouseEventHandler(this.button_ManualCathodeSense_MouseDown);
             this.button_ManualCathodeSense.MouseUp += new System.Windows.Forms.MouseEventHandler(this.button_ManualCathodeSense_MouseUp);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 171);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(85, 13);
-            this.label2.TabIndex = 42;
-            this.label2.Text = "Recording Cycle";
             // 
             // label_Flash
             // 
@@ -254,7 +245,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(145, 148);
+            this.label3.Location = new System.Drawing.Point(8, 166);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(49, 13);
             this.label3.TabIndex = 44;
@@ -272,7 +263,7 @@
             // label_LastFileName
             // 
             this.label_LastFileName.AutoSize = true;
-            this.label_LastFileName.Location = new System.Drawing.Point(191, 148);
+            this.label_LastFileName.Location = new System.Drawing.Point(54, 166);
             this.label_LastFileName.Name = "label_LastFileName";
             this.label_LastFileName.Size = new System.Drawing.Size(83, 13);
             this.label_LastFileName.TabIndex = 46;
@@ -344,21 +335,31 @@
             this.textBox_Delay2.Size = new System.Drawing.Size(30, 20);
             this.textBox_Delay2.TabIndex = 54;
             // 
-            // button_SaveSettings
+            // button_ApplySettings
             // 
-            this.button_SaveSettings.Location = new System.Drawing.Point(445, 242);
-            this.button_SaveSettings.Name = "button_SaveSettings";
-            this.button_SaveSettings.Size = new System.Drawing.Size(73, 34);
-            this.button_SaveSettings.TabIndex = 55;
-            this.button_SaveSettings.Text = "Save Settings";
-            this.button_SaveSettings.UseVisualStyleBackColor = true;
+            this.button_ApplySettings.Location = new System.Drawing.Point(445, 242);
+            this.button_ApplySettings.Name = "button_ApplySettings";
+            this.button_ApplySettings.Size = new System.Drawing.Size(73, 34);
+            this.button_ApplySettings.TabIndex = 55;
+            this.button_ApplySettings.Text = "Save Settings";
+            this.button_ApplySettings.UseVisualStyleBackColor = true;
+            this.button_ApplySettings.Click += new System.EventHandler(this.button_ApplySettings_Click);
+            // 
+            // button_ADUStatus
+            // 
+            this.button_ADUStatus.Location = new System.Drawing.Point(355, 61);
+            this.button_ADUStatus.Name = "button_ADUStatus";
+            this.button_ADUStatus.Size = new System.Drawing.Size(65, 34);
+            this.button_ADUStatus.TabIndex = 56;
+            this.button_ADUStatus.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(530, 282);
-            this.Controls.Add(this.button_SaveSettings);
+            this.Controls.Add(this.button_ADUStatus);
+            this.Controls.Add(this.button_ApplySettings);
             this.Controls.Add(this.textBox_Delay2);
             this.Controls.Add(this.textBox_Delay1);
             this.Controls.Add(this.label10);
@@ -370,7 +371,6 @@
             this.Controls.Add(this.label_LastFileName);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.button_ManualCathodeSense);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.checkBox_Bypass);
@@ -419,7 +419,6 @@
         private System.Windows.Forms.CheckBox checkBox_Bypass;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button_ManualCathodeSense;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label_Flash;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -432,7 +431,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox textBox_Delay1;
         private System.Windows.Forms.TextBox textBox_Delay2;
-        private System.Windows.Forms.Button button_SaveSettings;
+        private System.Windows.Forms.Button button_ApplySettings;
+        private System.Windows.Forms.Button button_ADUStatus;
     }
 }
 
