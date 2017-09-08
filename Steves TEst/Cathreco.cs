@@ -529,7 +529,7 @@ namespace CathRecorderMain
 
             //AduSetOutState(0);
 
-            return (AduGetInputState(0, 0)); // Return input state
+            return (AduGetInputState(1, 3)); // Return input state
         }
 
         // FUNCTION:  buttonTakePic_Click:  Record a Single Photo Button
