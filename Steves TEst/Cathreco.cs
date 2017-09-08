@@ -523,13 +523,13 @@ namespace CathRecorderMain
         {
             if (checkBox_Bypass.Checked)
             {
-                if (fManualCathodeSense)
-                    return (true);
+                return (fManualCathodeSense);
+            }
+            else
+            {
+                return (AduGetInputState(1, 3)); // Return input state
             }
 
-            //AduSetOutState(0);
-
-            return (AduGetInputState(1, 3)); // Return input state
         }
 
         // FUNCTION:  buttonTakePic_Click:  Record a Single Photo Button
